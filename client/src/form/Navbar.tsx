@@ -1,39 +1,43 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Search,
-  Menu,
-  X,
-  Home,
-  Phone,
-  User,
-  Building,
-  Key,
-  DollarSign,
-  LayoutDashboard,
-  LogOut,
-} from 'lucide-react';
 import Link from 'next/link';
+import {
+  Search, Menu, X, Home, Phone, User, Building, 
+  LayoutDashboard, LogOut, ChevronDown, Info, LucideProps,
+} from 'lucide-react';
 import { useUser } from '@/context/UserContext';
 import { logout } from '@/service/auth';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { cn } from '@/lib/utils';
+
+
+type MenuItemType = {
+  name: string;
+  href: string;
+  icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+};
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobilePropertiesOpen, setIsMobilePropertiesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
 
   const { user, isLoading, setUser } = useUser();
 
-  console.log('User:', user);
-
   const placeholderTexts = [
     "Search luxury apartments...",
     "Find your dream home...",
     "Explore commercial spaces...",
-    "Discover new properties...",
-    "Search by location...",
-    "Find rental properties..."
   ];
 
   useEffect(() => {
@@ -69,7 +73,7 @@ export default function Navbar() {
   const getDashboardUrl = (role: string): string => {
     switch (role) {
       case 'superadmin':
-        return '/superAdmin/Manage Admins';
+        return '/superAdmin/All-Properties';
       case 'admin':
         return '/admin/dashboard';
       case 'seller':
@@ -81,13 +85,16 @@ export default function Navbar() {
     }
   };
 
-  const menuItems = [
+
+  const mainMenuItems: MenuItemType[] = [
     { name: 'Home', href: '/', icon: Home },
-    { name: 'Properties', href: '/properties', icon: Building },
-    { name: 'Buy', href: '/buy', icon: Key },
-    { name: 'Rent', href: '/rent', icon: DollarSign },
-    { name: 'About', href: '/about' },
+    { name: 'About', href: '/about', icon: Info },
     { name: 'Contact', href: '/contact', icon: Phone },
+  ];
+
+  const propertiesSubMenuItems = [
+    { name: 'Buy a Home', href: '/buy', description: 'Find your new home to purchase.' },
+    { name: 'Rent a Home', href: '/rent', description: 'Discover great properties for rent.' },
   ];
 
   if (isLoading) {
@@ -109,8 +116,6 @@ export default function Navbar() {
       <nav className="bg-white/95 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-
-            {/* Logo */}
             <div className="flex-shrink-0">
               <Link href="/" className="flex items-center space-x-2 group">
                 <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
@@ -121,8 +126,6 @@ export default function Navbar() {
                 </span>
               </Link>
             </div>
-
-            {/* Search (Desktop) */}
             <div className="hidden md:block flex-1 max-w-md mx-8">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -142,44 +145,75 @@ export default function Navbar() {
                 </button>
               </div>
             </div>
+            
+            <div className="hidden md:flex items-center space-x-1">
+              <NavigationMenu>
+                <NavigationMenuList>
+                  {mainMenuItems.map((item) => (
+                    <NavigationMenuItem key={item.name}>
+                      <Link href={item.href} className={navigationMenuTriggerStyle()}>
+                        <item.icon className="h-4 w-4 mr-1" />
+                        {item.name}
+                      </Link>
+                    </NavigationMenuItem>
+                  ))}
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>
+                      <Building className="h-4 w-4 mr-1" />
+                      Properties
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[300px] gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <Link
+                              className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              href="/properties"
+                            >
+                              <Building className="h-6 w-6" />
+                              <div className="mb-2 mt-4 text-lg font-medium">
+                                All Properties
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                Explore our complete collection of stunning properties.
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                        {propertiesSubMenuItems.map((item) => (
+                          <ListItem key={item.name} title={item.name} href={item.href}>
+                            {item.description}
+                          </ListItem>
+                        ))}
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="flex items-center space-x-1 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium group"
-                  >
-                    {Icon && <Icon className="h-4 w-4" />}
-                    <span>{item.name}</span>
-                  </Link>
-                );
-              })}
+              <div className="w-4"></div>
 
               {user?.role ? (
-                <div className="flex items-center space-x-3 ml-4">
+                <div className="flex items-center space-x-3">
                   <Link
                     href={getDashboardUrl(user.role)}
                     className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 group"
                   >
                     <LayoutDashboard className="h-4 w-4 group-hover:animate-pulse" />
-                    <span className="capitalize">{user.role} Dashboard</span>
+                    <span className="capitalize">{user.role}</span>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-2 text-red-500 hover:text-red-700 transition"
+                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition"
+                    title="Logout"
                   >
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
+                    <LogOut className="h-5 w-5" />
                   </button>
                 </div>
               ) : (
                 <Link
                   href="/login"
-                  className="ml-4 flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                  className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200"
                 >
                   <User className="h-4 w-4" />
                   <span>Login</span>
@@ -187,7 +221,6 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile menu button */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -197,51 +230,53 @@ export default function Navbar() {
               </button>
             </div>
           </div>
-
-          {/* Mobile Menu */}
+          
           {isMenuOpen && (
-            <div className="md:hidden mt-2 space-y-2">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="block px-4 py-2 text-gray-700 hover:bg-blue-50 rounded transition"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {Icon && <Icon className="inline-block h-5 w-5 mr-2" />}
-                    {item.name}
-                  </Link>
-                );
-              })}
-
+            <div className="md:hidden mt-2 space-y-1 pb-4">
+              {mainMenuItems.map((item) => (
+                <Link key={item.name} href={item.href} className="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-md" onClick={() => setIsMenuOpen(false)}>
+                  <item.icon className="inline-block h-5 w-5 mr-3" />
+                  {item.name}
+                </Link>
+              ))}
+              <div>
+                <button
+                  onClick={() => setIsMobilePropertiesOpen(!isMobilePropertiesOpen)}
+                  className="w-full flex justify-between items-center px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-md"
+                >
+                  <span className="flex items-center">
+                    <Building className="inline-block h-5 w-5 mr-3" />
+                    Properties
+                  </span>
+                  <ChevronDown className={`h-5 w-5 transition-transform ${isMobilePropertiesOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isMobilePropertiesOpen && (
+                  <div className="pl-8 pt-1 space-y-1 border-l-2 border-blue-100 ml-5">
+                    <Link href="/properties" className="block px-4 py-2 text-gray-600 hover:bg-blue-50 rounded-md" onClick={() => setIsMenuOpen(false)}>All Properties</Link>
+                    {propertiesSubMenuItems.map((item) => (
+                      <Link key={item.name} href={item.href} className="block px-4 py-2 text-gray-600 hover:bg-blue-50 rounded-md" onClick={() => setIsMenuOpen(false)}>
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="border-t my-2"></div>
               {user?.role ? (
                 <>
-                  <Link
-                    href={getDashboardUrl(user.role)}
-                    className="block px-4 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded transition"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <LayoutDashboard className="inline-block h-5 w-5 mr-2" />
+                  <Link href={getDashboardUrl(user.role)} className="flex items-center px-4 py-3 bg-blue-50 text-blue-700 font-semibold rounded-md" onClick={() => setIsMenuOpen(false)}>
+                    <LayoutDashboard className="inline-block h-5 w-5 mr-3" />
                     {user.role} Dashboard
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition rounded"
-                  >
-                    <LogOut className="inline-block h-5 w-5 mr-2" />
+                  <button onClick={handleLogout} className="w-full text-left flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition rounded-md">
+                    <LogOut className="inline-block h-5 w-5 mr-3" />
                     Logout
                   </button>
                 </>
               ) : (
-                <Link
-                  href="/login"
-                  className="block px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded transition"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <User className="inline-block h-5 w-5 mr-2" />
-                  Login
+                <Link href="/login" className="flex items-center px-4 py-3 bg-blue-600 text-white font-semibold rounded-md" onClick={() => setIsMenuOpen(false)}>
+                  <User className="inline-block h-5 w-5 mr-3" />
+                  Login / Sign Up
                 </Link>
               )}
             </div>
@@ -251,3 +286,30 @@ export default function Navbar() {
     </div>
   );
 }
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className,title, href, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          ref={ref}
+           href={href ?? "#"}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";

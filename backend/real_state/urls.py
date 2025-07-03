@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.response import Response
 from rest_framework import status
-
+from accounts.views import MyTokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -38,6 +38,6 @@ urlpatterns = [
     path('properties/', include('properties.urls')),
     path('favorites/', include('favorites.urls')),
     path('inquiries/', include('inquiries.urls')),
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+       path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

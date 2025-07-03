@@ -37,7 +37,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Breadcrumb className="hidden sm:flex">
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/dashboard">Home</BreadcrumbLink>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>

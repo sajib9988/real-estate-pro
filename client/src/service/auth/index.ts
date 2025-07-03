@@ -42,26 +42,36 @@ export const loginUser = async (userData: FieldValues) => {
     });
     const result = await res.json();
 
-    if (result.access && result.refresh) {
-      const cookieStore = await cookies();
+    if (res.ok && result.access && result.refresh) {
+      
+      const cookieStore = await cookies(); 
+      
       cookieStore.set('accessToken', result.access, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
       });
       cookieStore.set('refreshToken', result.refresh, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',
-      });
+      }); 
+
+      const decodedUser = jwtDecode<DecodedUser>(result.access);
+
+      return { ok: true, data: { user: decodedUser } };
     }
-    return { ok: res.ok, data: result };
+
+    return { ok: false, data: result };
+
   } catch (error: any) {
-    return { success: false, message: error.message };
+    return { ok: false, data: { message: error.message } };
   }
 };
+
+
 
 
 export const logout = async () => {

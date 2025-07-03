@@ -60,7 +60,7 @@ const menuByRole: Record<UserRole, SidebarMenuItemType[]> = {
     { title: "Manage Admins", url: "/superAdmin/Manage Admins", icon: Users },
     { title: "Manage Sellers", url: "/superAdmin/Manage Sellers", icon: User },
     { title: "Manage Buyers", url: "/superAdmin/Manage Buyers", icon: User },
-    { title: "All Properties", url: "/superAdmin/All Properties", icon: Home },
+    { title: "All Properties", url: "/superAdmin/All-Properties", icon: Home },
     { title: "Reports", url: "/superAdmin/Reports", icon: FileText },
   ],
   admin: [

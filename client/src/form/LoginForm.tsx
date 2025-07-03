@@ -60,7 +60,7 @@ const { setUser } = useUser(); // 👈 Add this line
         form.reset();
          setUser(response.data.user); 
         router.push('/'); // Redirect to the dashboard or home page
-
+router.refresh();
  
        
       } 
