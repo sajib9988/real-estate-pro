@@ -4,45 +4,31 @@
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
-export const addProperties = async (Data: FormData): Promise<Response> => {
+export const addProperties = async (Data: FormData) => {
   try {
     const accessToken = (await cookies()).get("accessToken")?.value;
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/properties/`, {
       method: "POST",
       body: Data,
       headers: {
-       Authorization: `Bearer ${accessToken as string}`, // ✅ correct syntax
-
-              },
-
-
+       Authorization: `Bearer ${accessToken as string}`,
+      },
     });
+
+
+    if (!res.ok) {
+    
+        const errorData = await res.json();
+        const errorMessage = errorData.error || errorData.detail || 'Failed to add property';
+        throw new Error(errorMessage);
+    }
+
     revalidateTag("PROPERTY");
-    return res;
+ 
+    return res.json();
+
   } catch (error: any) {
-    throw new Error(`Network error or failed to fetch: ${error.message || error}`);
+
+    throw new Error(`Operation failed: ${error.message || error}`);
   }
 };
-
-
-export const addService = async (data: FormData) => {
- const accessToken = (await cookies()).get("accessToken")?.value;
-
- const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/service/add-service`, {
-    method: 'POST',
-    body: data,
-      headers: {
-      Authorization : accessToken as string
-    },
-  });
-
-  console.log('resss', res);
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.log("📛 Server Error:", errText);
-    throw new Error('Failed to add service');
-  }
-
-  return res.json();
-}

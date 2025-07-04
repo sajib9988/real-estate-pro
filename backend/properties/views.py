@@ -1,45 +1,53 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Property, PropertyImage
 from .serializers import PropertySerializer
 from cloudinary.uploader import upload as cloudinary_upload
-from django.conf import settings
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter
-from rest_framework.generics import ListCreateAPIView
-from rest_framework import generics
 import json
 
-
-class PropertyListCreateView(ListCreateAPIView):
-    queryset = Property.objects.all().order_by('-created_at')
+class PropertyView(generics.GenericAPIView):
+    queryset = Property.objects.all()
     serializer_class = PropertySerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['location', 'bedrooms', 'bathrooms', 'property_type', 'purpose', 'is_published']
     search_fields = ['title', 'description', 'location']
+    lookup_field = 'id'
 
+    def get_permissions(self):
+        if self.request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return [IsAuthenticated()]
+        return [AllowAny()]
 
+    # List all properties (GET /properties/)
+    def get(self, request, id=None):
+        if id:
+            # Single retrieve
+            property_instance = self.get_object()
+            serializer = self.get_serializer(property_instance)
+            return Response(serializer.data)
+        else:
+            # List all
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+
+    # Create new property (POST /properties/)
     def post(self, request):
-        self.permission_classes = [IsAuthenticated]  # Only POST requires auth
-        # Step 1: Parse JSON string from 'propertyData'
         property_data_json = request.POST.get('propertyData')
         try:
             property_data = json.loads(property_data_json)
         except (json.JSONDecodeError, TypeError):
             return Response({'error': 'Invalid JSON in propertyData'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Step 2: Handle images
         images = request.FILES.getlist('images') if 'images' in request.FILES else []
 
-        # Step 3: Validate with serializer
-        serializer = PropertySerializer(data=property_data)
+        serializer = self.get_serializer(data=property_data)
         if serializer.is_valid():
             property_instance = serializer.save(owner=request.user)
 
-            # Step 4: Upload images to Cloudinary
             for img in images:
                 result = cloudinary_upload(img)
                 PropertyImage.objects.create(
@@ -47,6 +55,27 @@ class PropertyListCreateView(ListCreateAPIView):
                     image=result['secure_url']
                 )
 
-            return Response(PropertySerializer(property_instance).data, status=status.HTTP_201_CREATED)
+            return Response(self.get_serializer(property_instance).data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Update existing property (PUT or PATCH /properties/{id}/)
+    def put(self, request, id=None):
+        return self._update(request, id)
+
+    def patch(self, request, id=None):
+        return self._update(request, id)
+
+    def _update(self, request, id):
+        property_instance = self.get_object()
+        serializer = self.get_serializer(property_instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Delete property (DELETE /properties/{id}/)
+    def delete(self, request, id=None):
+        property_instance = self.get_object()
+        property_instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

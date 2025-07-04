@@ -59,8 +59,11 @@ export function RealEstateForm() {
     }
   })
 
-  const onSubmit = async (data: FormValues) => {
-    const formData = new FormData()
+// In your RealEstateForm.tsx component
+
+const onSubmit = async (data: FormValues) => {
+    const formData = new FormData();
+    // ... (your code to build formData is correct)
     const propertyData = {
       title: data.title,
       description: data.description,
@@ -72,27 +75,29 @@ export function RealEstateForm() {
       property_type: data.property_type,
       purpose: data.purpose,
       is_published: data.is_published
-    }
-    formData.append('propertyData', JSON.stringify(propertyData))
+    };
+    formData.append('propertyData', JSON.stringify(propertyData));
     images.forEach((file) => {
-      formData.append('images', file)
-    })
+      formData.append('images', file);
+    });
 
     try {
-      const res = await addProperties(formData)
+      
+      const responseData = await addProperties(formData);
 
-      if (res.ok) {
-        form.reset()
-        console.log('ress', res)
-        toast.success("properties upload successfully!")
-      } else {
-        const errorData = await res.json();
-        toast.error(`Failed to upload property: ${errorData.error || errorData.detail || 'Something went wrong'}`);
-      }
+
+      toast.success("Property uploaded successfully!");
+      console.log('Successfully created property:', responseData);
+      form.reset();
+      setImages([]);
+
     } catch (error: any) {
+
+      console.error("Failed to upload property:", error);
+   
       toast.error(`Failed to upload property: ${error.message}`);
     }
-  }
+}
 
   return (
     <Form {...form}>
