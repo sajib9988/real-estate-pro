@@ -16,12 +16,13 @@ export const addProperties = async (Data: FormData) => {
     });
 
 
-    if (!res.ok) {
-    
-        const errorData = await res.json();
-        const errorMessage = errorData.error || errorData.detail || 'Failed to add property';
-        throw new Error(errorMessage);
-    }
+   if (!res.ok) {
+  const errorData = await res.json();
+  console.error('Server responded with error:', errorData); // এটায় বিস্তারিত দেখা যাবে
+  const errorMessage = errorData.error || errorData.detail || 'Failed to add property';
+  throw new Error(errorMessage);
+}
+
 
     revalidateTag("PROPERTY");
  

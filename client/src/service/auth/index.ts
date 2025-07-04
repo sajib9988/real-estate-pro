@@ -47,7 +47,6 @@ export const loginUser = async (userData: FieldValues) => {
       const cookieStore = await cookies(); 
       
       cookieStore.set('accessToken', result.access, {
-        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         path: '/',

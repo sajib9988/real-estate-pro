@@ -1,9 +1,7 @@
-
-
 from django.urls import path
-from .views import PropertyListCreateView, PropertyRetrieveUpdateDestroyView
+from .views import PropertyView  # ✅ ঠিক ক্লাস ইমপোর্ট করো
 
 urlpatterns = [
-    path('', PropertyListCreateView.as_view(), name='property-list-create'),
-    path('<int:id>/', PropertyRetrieveUpdateDestroyView.as_view(), name='property-detail'),
+    path('', PropertyView.as_view(), name='property-list-create'),
+    path('<int:id>/', PropertyView.as_view(), name='property-detail'),
 ]
