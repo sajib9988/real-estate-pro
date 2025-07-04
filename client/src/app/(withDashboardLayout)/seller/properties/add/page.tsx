@@ -1,9 +1,12 @@
+import { RealEstateForm } from '@/form/RealEstateForm'
 import React from 'react'
 
-const page = () => {
+const AddPage = () => {
   return (
-    <div>page</div>
+    <div>
+      <RealEstateForm></RealEstateForm>
+    </div>
   )
 }
 
-export default page
+export default AddPage

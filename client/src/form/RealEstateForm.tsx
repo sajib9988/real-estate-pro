@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import {
@@ -20,6 +21,7 @@ import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addProperties } from '@/service/properties'
 import { Switch } from '@radix-ui/react-switch'
+import { toast } from 'sonner'
 
 // ✅ Form validation schema
 const formSchema = z.object({
@@ -59,7 +61,6 @@ export function RealEstateForm() {
 
   const onSubmit = async (data: FormValues) => {
     const formData = new FormData()
-    // Fixed: Remove duplicate variable declaration
     const propertyData = {
       title: data.title,
       description: data.description,
@@ -77,12 +78,19 @@ export function RealEstateForm() {
       formData.append('images', file)
     })
 
-    const res = await addProperties(formData)
+    try {
+      const res = await addProperties(formData)
 
-    if (res.ok) {
-      alert('Property created!')
-    } else {
-      alert('Something went wrong')
+      if (res.ok) {
+        form.reset()
+        console.log('ress', res)
+        toast.success("properties upload successfully!")
+      } else {
+        const errorData = await res.json();
+        toast.error(`Failed to upload property: ${errorData.error || errorData.detail || 'Something went wrong'}`);
+      }
+    } catch (error: any) {
+      toast.error(`Failed to upload property: ${error.message}`);
     }
   }
 
