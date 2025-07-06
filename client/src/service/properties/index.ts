@@ -107,7 +107,7 @@ export const updateProperties = async (id: string, Data: FormData) => {
 export const getPropertiesBySeller = async () => {
   try {
     const accessToken = (await cookies()).get("accessToken")?.value;
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/my-properties/`, {  // <-- corrected path
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/properties/my-properties/`, {  // <-- corrected path
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken as string}`,

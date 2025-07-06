@@ -70,7 +70,7 @@ export function PropertyTable({ data, onDelete, onUpdate }: PropertyTableProps) 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((property) => (
+          {data?.map((property) => (
             <TableRow key={property.id}>
               <TableCell className="py-2 px-4 border-b">{property.title}</TableCell>
               <TableCell className="py-2 px-4 border-b">${property.price}</TableCell>

@@ -12,7 +12,8 @@ const SellerDashboardPage = () => {
     const fetchProperties = async () => {
       try {
         const response = await getPropertiesBySeller();
-        setProperties(response.data as Property[]);  // if your API response has `data` key
+        setProperties(response.data as Property[]); 
+  console.log("Fetched properties:", response.data);
       } catch (error) {
         console.error("Error fetching properties:", error);
       }
