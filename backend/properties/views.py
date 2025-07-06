@@ -3,10 +3,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Property, PropertyImage
-from .serializers import PropertySerializer
+from rest_framework.views import APIView
 from cloudinary.uploader import upload as cloudinary_upload
 import json
+
+from .models import Property, PropertyImage
+from .serializers import PropertySerializer
 
 class PropertyView(generics.GenericAPIView):
     queryset = Property.objects.all()
@@ -21,20 +23,16 @@ class PropertyView(generics.GenericAPIView):
             return [IsAuthenticated()]
         return [AllowAny()]
 
-    # List all properties (GET /properties/)
     def get(self, request, id=None):
         if id:
-            # Single retrieve
             property_instance = self.get_object()
             serializer = self.get_serializer(property_instance)
             return Response(serializer.data)
         else:
-            # List all
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
 
-    # Create new property (POST /properties/)
     def post(self, request):
         property_data_json = request.POST.get('propertyData')
         try:
@@ -59,7 +57,6 @@ class PropertyView(generics.GenericAPIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Update existing property (PUT or PATCH /properties/{id}/)
     def put(self, request, id=None):
         return self._update(request, id)
 
@@ -74,8 +71,18 @@ class PropertyView(generics.GenericAPIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Delete property (DELETE /properties/{id}/)
     def delete(self, request, id=None):
         property_instance = self.get_object()
         property_instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+class MyPropertiesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        properties = Property.objects.filter(owner=request.user)
+        serializer = PropertySerializer(properties, many=True)
+        return Response(serializer.data)

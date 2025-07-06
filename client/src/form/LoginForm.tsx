@@ -222,7 +222,7 @@ router.refresh();
         {/* Sign up link */}
         <div className="text-center mt-6">
           <p className="text-white/70">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-purple-400 hover:text-purple-300 transition-colors font-semibold">
               Sign up
             </Link>

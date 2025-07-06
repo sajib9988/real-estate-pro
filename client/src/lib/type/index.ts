@@ -1,17 +1,14 @@
-export interface DecodedUser {
-  user_id: number;
-  email: string;
-  role: 'buyer' | 'seller' | 'admin' | 'superadmin';
-  exp: number;
-  iat: number;
-}
-
-export interface TUser {
-  user_id: number;
-  email: string;
-  role: 'buyer' | 'seller' | 'admin' | 'superadmin';
-  first_name?: string;
-  last_name?: string;
-  exp: number;
-  iat: number;
+export interface Property {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  location: string;
+  bedrooms: number;
+  bathrooms: number;
+  space: number;
+  property_type: string;
+  purpose: string;
+  is_published: boolean;
+  images: { image: string }[];
 }

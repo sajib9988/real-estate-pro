@@ -45,7 +45,7 @@ export default function Navbar() {
       setPlaceholderIndex((prev) => (prev + 1) % placeholderTexts.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [placeholderTexts.length]);
 
   const handleSearch = (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
