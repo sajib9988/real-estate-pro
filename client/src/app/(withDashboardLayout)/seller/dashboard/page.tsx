@@ -8,17 +8,17 @@ import { useEffect, useState } from "react";
 const SellerDashboardPage = () => {
   const [properties, setProperties] = useState<Property[]>([]);  // <-- typed state
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        const response = await getPropertiesBySeller();
-        setProperties(response.data as Property[]); 
-  console.log("Fetched properties:", response.data);
-      } catch (error) {
-        console.error("Error fetching properties:", error);
-      }
-    };
+  const fetchProperties = async () => {
+    try {
+      const response = await getPropertiesBySeller();
+      setProperties(response as Property[]); 
+      console.log("Fetched properties:", response);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchProperties();
   }, []);
 
@@ -34,7 +34,7 @@ const SellerDashboardPage = () => {
   const handleUpdate = async (id: string, updatedData: FormData) => {
     try {
       await updateProperties(id, updatedData);
-      // Optionally update state or refetch
+      fetchProperties(); // Re-fetch properties after successful update
     } catch (error) {
       console.error("Error updating property:", error);
     }

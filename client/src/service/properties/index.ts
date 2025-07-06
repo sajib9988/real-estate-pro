@@ -7,12 +7,10 @@ import { cookies } from "next/headers";
 
 export const getProperties = async () => {
   try {
-    const accessToken = (await cookies()).get("accessToken")?.value;
+    
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/properties/`, {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken as string}`,
-      },
+  
       next: { tags: ["PROPERTY"] },
     });
 

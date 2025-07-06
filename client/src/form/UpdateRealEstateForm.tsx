@@ -120,7 +120,9 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
           is_published: data.is_published,
           existingImages: existingImageUrls // Add existing image URLs
         };
-        formData.append('propertyData', JSON.stringify(propertyData));
+        for (const key in propertyData) {
+          formData.append(key, (propertyData as any)[key]);
+        }
         
         images.forEach((file) => {
           formData.append('images', file);
