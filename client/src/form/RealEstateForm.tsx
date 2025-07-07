@@ -314,9 +314,8 @@ export function RealEstateForm() {
           </div>
 
           <p className="text-xs text-center text-gray-500">
-                You can add multiple images.
-            </p>
-          </div>
+            You can add multiple images.
+          </p>
         </div>
 
         <Button
@@ -326,6 +325,6 @@ export function RealEstateForm() {
           Submit Property
         </Button>
       </form>
-    </Form> 
+    </Form>
   )
 }

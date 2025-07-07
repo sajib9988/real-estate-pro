@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/Switch'
+
 
 // Library imports
 import { useForm } from 'react-hook-form'
@@ -59,7 +59,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
     defaultValues: {
       title: '',
       description: '',
-      price: '',
+      price: 0,
       location: '',
       bedrooms: 1,
       bathrooms: 1,
@@ -77,7 +77,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
         form.reset({
           title: property.title,
           description: property.description,
-          price: String(property.price),
+          price: property.price,
           location: property.location,
           bedrooms: property.bedrooms,
           bathrooms: property.bathrooms,
@@ -86,7 +86,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
           purpose: property.purpose,
           status: property.status
         });
-        setExistingImageUrls(property.images.map((img: any) => img.image)); // Assuming property.images is an array of image objects with an 'image' URL field
+        setExistingImageUrls(property.images.map((img: any) => img.image));
       } catch (error) {
         console.error("Failed to fetch property:", error);
         toast.error("Failed to load property data.");
@@ -98,7 +98,6 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
     }
   }, [propertyId, form]);
 
-  // Form submission handler (no changes here)
   const onSubmit = async (data: FormValues) => {
     const promise = new Promise(async (resolve, reject) => {
       try {
@@ -118,8 +117,9 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
           property_type: data.property_type,
           purpose: data.purpose,
           status: data.status,
-          existingImages: existingImageUrls // Add existing image URLs
+          existingImages: existingImageUrls
         };
+        
         for (const key in propertyData) {
           formData.append(key, (propertyData as any)[key]);
         }
@@ -156,24 +156,23 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg"
       >
-        {/* All other form fields are unchanged */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Left Column */}
-            <div className="space-y-6">
+          {/* Left Column */}
+          <div className="space-y-6">
             <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
+              control={form.control}
+              name="title"
+              render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
                     <Input placeholder="e.g. Modern Apartment in Downtown" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
-                )}
+              )}
             />
-            {/* ... Other fields in left column ... */}
+
             <FormField
               control={form.control}
               name="description"
@@ -215,24 +214,24 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
                 </FormItem>
               )}
             />
-            </div>
+          </div>
 
-            {/* Right Column */}
-            <div className="space-y-6">
+          {/* Right Column */}
+          <div className="space-y-6">
             <FormField
-                control={form.control}
-                name="bedrooms"
-                render={({ field }) => (
+              control={form.control}
+              name="bedrooms"
+              render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Bedrooms</FormLabel>
-                    <FormControl>
+                  <FormLabel>Bedrooms</FormLabel>
+                  <FormControl>
                     <Input type="number" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
-                )}
+              )}
             />
-            {/* ... Other fields in right column ... */}
+
             <FormField
               control={form.control}
               name="bathrooms"
@@ -291,6 +290,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="status"
@@ -308,91 +308,95 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
                 </FormItem>
               )}
             />
-            </div>
+          </div>
         </div>
 
-        
-
-          <div className="space-y-4 rounded-lg border p-4 shadow-sm">
-            <Label className='text-base font-medium'>Property Images</Label>
-            
-            {/* Image Preview Grid - only shows if images exist */}
-            {(images.length > 0 || existingImageUrls.length > 0) && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {existingImageUrls.map((url, index) => (
-                    <div key={`existing-${index}`} className="relative group">
-                    <Image 
-                        src={url} 
-                        alt={`Existing Image ${index + 1}`} 
-                        width={70} 
-                        height={70}
-                        className="w-full h-28 object-cover rounded-md" 
-                    />
-                    <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() =>
-                        setExistingImageUrls((prev) => prev.filter((_, i) => i !== index))
-                        }
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
-                    </Button>
-                    </div>
-                ))}
-                {images.map((img, index) => (
-                    <div key={`new-${index}`} className="relative group">
-                    <Image 
-                        src={URL.createObjectURL(img)} 
-                        alt={img.name} 
-                        width={70} 
-                        height={70}
-                        className="w-full h-28 object-cover rounded-md" 
-                    />
-                    <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() =>
-                        setImages((prev) => prev.filter((_, i) => i !== index))
-                        }
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line></svg>
-                    </Button>
-                    </div>
-                ))}
+        <div className="space-y-4 rounded-lg border p-4 shadow-sm">
+          <Label className="text-base font-medium">Property Images</Label>
+          
+          {/* Image Preview Grid - only shows if images exist */}
+          {(images.length > 0 || existingImageUrls.length > 0) && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {existingImageUrls.map((url, index) => (
+                <div key={`existing-${index}`} className="relative group">
+                  <Image 
+                    src={url} 
+                    alt={`Existing Image ${index + 1}`} 
+                    width={70} 
+                    height={70}
+                    className="w-full h-28 object-cover rounded-md" 
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() =>
+                      setExistingImageUrls((prev) => prev.filter((_, i) => i !== index))
+                    }
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" x2="6" y1="6" y2="18"></line>
+                      <line x1="6" x2="18" y1="6" y2="18"></line>
+                    </svg>
+                  </Button>
                 </div>
-            )}
-            
-            {/* Custom File Upload Button Area */}
-            <div className="flex justify-center items-center w-full pt-2">
-                <Label 
-                    htmlFor="file-upload" 
-                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer"
-                >
-                    Choose Files
-                </Label>
-                <Input
-                    id="file-upload" // This ID links the label to the input
-                    type="file"
-                    multiple
-                    className="hidden" // Hides the default browser input
-                    onChange={(e) => {
-                        if (e.target.files) {
-                            const newFiles = Array.from(e.target.files);
-                            setImages((prevImages) => [...prevImages, ...newFiles]);
-                            e.target.value = '';
-                        }
-                    }}
-                />
+              ))}
+              {images.map((img, index) => (
+                <div key={`new-${index}`} className="relative group">
+                  <Image 
+                    src={URL.createObjectURL(img)} 
+                    alt={img.name} 
+                    width={70} 
+                    height={70}
+                    className="w-full h-28 object-cover rounded-md" 
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() =>
+                      setImages((prev) => prev.filter((_, i) => i !== index))
+                    }
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" x2="6" y1="6" y2="18"></line>
+                      <line x1="6" x2="18" y1="6" y2="18"></line>
+                    </svg>
+                  </Button>
+                </div>
+              ))}
             </div>
-
-            <p className="text-xs text-center text-gray-500">
-                You can add multiple images.
-            </p>
+          )}
+          
+          {/* Custom File Upload Button Area */}
+          <div className="flex justify-center items-center w-full pt-2">
+            <Label 
+              htmlFor="file-upload" 
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 cursor-pointer"
+            >
+              Choose Files
+            </Label>
+            <Input
+              id="file-upload"
+              type="file"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) {
+                  const newFiles = Array.from(e.target.files);
+                  setImages((prevImages) => [...prevImages, ...newFiles]);
+                  e.target.value = '';
+                }
+              }}
+            />
           </div>
+
+          <p className="text-xs text-center text-gray-500">
+            You can add multiple images.
+          </p>
+        </div>
 
         <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700 py-3 text-lg font-semibold">
           Update Property
