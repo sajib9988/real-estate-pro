@@ -65,7 +65,7 @@ export function PropertyTable({ data, onDelete, onUpdate }: PropertyTableProps) 
             <TableHead className="py-2 px-4 border-b">Space</TableHead>
             <TableHead className="py-2 px-4 border-b">Type</TableHead>
             <TableHead className="py-2 px-4 border-b">Purpose</TableHead>
-            <TableHead className="py-2 px-4 border-b">Published</TableHead>
+            <TableHead className="py-2 px-4 border-b">Status</TableHead>
             <TableHead className="py-2 px-4 border-b text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>

@@ -40,7 +40,7 @@ const formSchema = z.object({
   space: z.coerce.number().min(1, 'Space must be at least 1 sqft'),
   property_type: z.string().min(1, 'Property type is required'),
   purpose: z.string().min(1, 'Purpose is required'),
-  is_published: z.boolean()
+  status: z.string().min(1, 'Status is required')
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -66,7 +66,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
       space: 1000,
       property_type: '',
       purpose: 'For Sale',
-      is_published: true
+      status: 'Pending'
     }
   })
 
@@ -84,7 +84,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
           space: property.space,
           property_type: property.property_type,
           purpose: property.purpose,
-          is_published: property.is_published
+          status: property.status
         });
         setExistingImageUrls(property.images.map((img: any) => img.image)); // Assuming property.images is an array of image objects with an 'image' URL field
       } catch (error) {
@@ -117,7 +117,7 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
           space: data.space,
           property_type: data.property_type,
           purpose: data.purpose,
-          is_published: data.is_published,
+          status: data.status,
           existingImages: existingImageUrls // Add existing image URLs
         };
         for (const key in propertyData) {
@@ -291,31 +291,28 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <FormControl>
+                    <select {...field} className="w-full p-2 border rounded-md h-10">
+                      <option value="Pending">Pending</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             </div>
         </div>
 
-        {/* --- IMAGE UPLOAD AND PUBLISH SECTION --- */}
-        <div className="space-y-6">
-          <FormField
-            control={form.control}
-            name="is_published"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                <div className="space-y-0.5">
-                  <FormLabel>Publish Property</FormLabel>
-                  <p className="text-sm text-muted-foreground">Make this property visible to everyone.</p>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+        
 
-          {/* ✅✅✅ DESIGN FIX: The entire image upload section is improved ✅✅✅ */}
           <div className="space-y-4 rounded-lg border p-4 shadow-sm">
             <Label className='text-base font-medium'>Property Images</Label>
             
@@ -396,7 +393,6 @@ export function UpdateRealEstateForm({ propertyId, onUpdate }: UpdateRealEstateF
                 You can add multiple images.
             </p>
           </div>
-        </div>
 
         <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700 py-3 text-lg font-semibold">
           Update Property

@@ -14,7 +14,7 @@ class PropertyView(generics.GenericAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['location', 'bedrooms', 'bathrooms', 'property_type', 'purpose', 'is_published']
+    filterset_fields = ['location', 'bedrooms', 'bathrooms', 'property_type', 'purpose']
     search_fields = ['title', 'description', 'location']
     lookup_field = 'id'
 
@@ -67,7 +67,14 @@ class PropertyView(generics.GenericAPIView):
         property_instance = self.get_object()
         serializer = self.get_serializer(property_instance, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            is_published = property_instance.is_published
+            if 'status' in serializer.validated_data:
+                if serializer.validated_data['status'] == 'Approved':
+                    is_published = True
+                elif serializer.validated_data['status'] == 'Rejected':
+                    is_published = False
+            
+            serializer.save(is_published=is_published)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -86,3 +93,22 @@ class MyPropertiesView(APIView):
         properties = Property.objects.filter(owner=request.user)
         serializer = PropertySerializer(properties, many=True)
         return Response(serializer.data)
+
+
+class SellerPropertyApprove(APIView):
+    permission_classes = [IsAuthenticated]
+    def post (self, request, id=None):
+        property_instance = Property.objects.get(pk=id)
+        action = request.data.get('action')
+        if action == 'approve':
+            property_instance.status = 'Approved'
+            property_instance.is_published = True
+            property_instance.save()
+            return Response({'message': 'Property approved and published.'}, status=status.HTTP_200_OK)
+        
+        elif action == 'reject':
+            property_instance.status = 'Rejected'
+            property_instance.is_published = False
+            property_instance.save()
+            return Response({'message': 'Property rejected.'}, status=status.HTTP_200_OK)
+

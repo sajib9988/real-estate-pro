@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from .permission import IsSuperAdmin
 
 # Models and Serializers
 from .models import CustomUser
@@ -45,7 +46,7 @@ class UserListView(APIView):
 
 
 @api_view(['PATCH'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsSuperAdmin])
 def change_user_role(request, user_id):
     """
     API view for a superadmin to change another user's role.

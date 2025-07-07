@@ -8,6 +8,16 @@ class Property(models.Model):
         (SALE, 'For Sale'),
         (RENT, 'For Rent'),
     ]
+
+
+    PENDING = 'Pending'
+    APPROVED = 'Approved'
+    REJECTED = 'Rejected'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected'),
+    ]
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -22,7 +32,8 @@ class Property(models.Model):
     space = models.PositiveIntegerField(help_text="Square feet")
     property_type = models.CharField(max_length=50, blank=True)
     purpose = models.CharField(max_length=10, choices=PURPOSE_CHOICES, default=SALE)
-    is_published = models.BooleanField(default=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    is_published = models.BooleanField(default=False)  
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
