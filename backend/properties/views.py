@@ -86,6 +86,7 @@ class PropertyView(generics.GenericAPIView):
 
 
 
+
 class MyPropertiesView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -12,3 +12,5 @@ export interface Property {
   is_published: boolean;
   images: { image: string }[];
 }
+
+

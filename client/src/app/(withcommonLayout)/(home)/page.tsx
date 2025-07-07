@@ -1,12 +1,16 @@
 
 import { Toaster } from "@/components/ui/toaster";
+import Footer from "@/homesection/Footer";
+import Property from "@/homesection/Property";
+
 
 
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-            
+    <main className="">
+          <Property></Property>
+          <Footer></Footer>
  <Toaster />
     </main>
   );

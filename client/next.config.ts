@@ -5,7 +5,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb', // ✅ 1MB থেকে বাড়িয়ে 10MB করা হলো
+      bodySizeLimit: '20mb', // ✅ 1MB থেকে বাড়িয়ে 10MB করা হলো
     },
   },
 };

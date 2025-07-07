@@ -23,20 +23,14 @@ export const PropertyCard = ({ property,  }: PropertyCardProps) => {
     return numPrice.toLocaleString();
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
 
   return (
     <div className="max-w-sm mx-auto bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       {/* Image Section */}
       <div className="relative">
         <Image 
-          src={property.images?.[0]?.url || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop'} 
+       src={property.images?.[0]?.image || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop'}
+
           alt={property.title}
             width={600}
             height={400}
@@ -115,11 +109,10 @@ export const PropertyCard = ({ property,  }: PropertyCardProps) => {
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <div className="text-xs text-gray-500">
-            Listed on {formatDate(property.created_at)}
-          </div>
+
           <Link 
-            onClick={() => onViewDetails?.(property)}
+            href={`/properties/${property.id}`}
+        
             className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >
             View Details
