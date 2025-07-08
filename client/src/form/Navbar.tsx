@@ -18,6 +18,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -32,7 +33,7 @@ export default function Navbar() {
   const [isMobilePropertiesOpen, setIsMobilePropertiesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-
+  const router = useRouter();
   const { user, isLoading, setUser } = useUser();
 
   const placeholderTexts = [
@@ -50,15 +51,19 @@ export default function Navbar() {
 
   const handleSearch = (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault();
-    console.log('Searching:', searchQuery);
+    if(searchQuery.trim()){
+      const query = new URLSearchParams({search: searchQuery.trim()}).toString();
+      router.push(`/search?${query}`)
+      setSearchQuery('');
+    }
+    
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      console.log('Searching:', searchQuery);
-    }
-  };
+const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (e.key === 'Enter') {
+    handleSearch(e);
+  }
+}
 
   const handleLogout = async () => {
     try {

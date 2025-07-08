@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <AppSidebar userRole={userRole} />
 
       <SidebarInset>
-        <header className="sticky top-0 z-10 bg-background flex h-16 items-center justify-between px-4 border-b">
+      
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Breadcrumb className="hidden sm:flex">
@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-        </header>
+   
 
         <main className="p-4 pt-6 relative min-h-[calc(100vh-4rem)] gradientBg">
           {children}
