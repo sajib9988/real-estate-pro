@@ -18,7 +18,9 @@ def list_favorites(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+ 
 def add_favorite(request):
+    print("Authorization Header:", request.headers.get("Authorization"))
     property_id = request.data.get('property')
     
     if not property_id:

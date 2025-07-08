@@ -15,7 +15,7 @@ export const PropertyMarquee = ({ properties }: Props) => {
  <Marquee
   pauseOnHover
   gradient={false}
-  speed={60}
+  speed={70}
 >
   {properties.map((property) => (
     <div

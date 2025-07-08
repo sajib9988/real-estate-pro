@@ -85,7 +85,8 @@ const menuByRole: Record<UserRole, SidebarMenuItemType[]> = {
   buyer: [
     { title: "Browse Properties", url: "/buyer/properties", icon: Building },
     { title: "Favorites", url: "/buyer/favorities", icon: Heart },
-    { title: "Add Inquiry", url: "/buyer/inquiries/add", icon: PlusCircle },
+    { title: "My Inquiries", url: "/buyer/inquiries", icon: MessageSquare },
+    
     { title: "Schedule Visit", url: "/buyer/visit", icon: Calendar },
     { title: "Profile", url: "/buyer/profile", icon: UserCog },
   ],

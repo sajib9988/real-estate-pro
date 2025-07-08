@@ -45,59 +45,39 @@ const authenticatedFetch = async (url: string, options: RequestInit = {}) => {
   return res;
 };
 
-
-// src/service/favourites/index.ts
-
-export const addFavorites = async (propertyId: string) => {
+export const sendInquiry = async (propertyId: string, message: string, contactNumber: string) => {
   try {
-    const res = await authenticatedFetch(`${process.env.NEXT_PUBLIC_BASE_API}/favorites/add/`, {
+    const res = await authenticatedFetch(`${process.env.NEXT_PUBLIC_BASE_API}/inquiries/create/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ property: propertyId }),
+      body: JSON.stringify({ property: propertyId, message, contact_number: contactNumber }),
     });
 
     if (!res.ok) {
-      throw new Error(`Error adding to favorites: ${res.statusText}`);
+      throw new Error(`Error sending inquiry: ${res.statusText}`);
     }
     
-    return await res.json(); // ✅ Direct return করো
+    return await res.json();
   } catch (error) {
-    console.error("Failed to add to favorites:", error);
+    console.error("Failed to send inquiry:", error);
     throw error;
   }
 };
 
-
-export  const removeFavorite = async (id: string) => {
+export const getInquiries = async () => {
   try {
-    const res = await authenticatedFetch(`${process.env.NEXT_PUBLIC_BASE_API}/favorites/remove/${id}`, {
-      method: 'DELETE',
+    const res = await authenticatedFetch(`${process.env.NEXT_PUBLIC_BASE_API}/inquiries/`, {
+      method: 'GET',
     });
+
     if (!res.ok) {
-      throw new Error(`Error removing favorite: ${res.statusText}`);
+      throw new Error(`Error fetching inquiries: ${res.statusText}`);
     }
     return res.json();
   } catch (error) {
-    console.error("Failed to remove favorite:", error);
+    console.error("Failed to fetch inquiries:", error);
     throw error;
   }
-}
-export const getFavoriteProperties = async () => {
-  try {
-    const res = await authenticatedFetch(`${process.env.NEXT_PUBLIC_BASE_API}/favorites/`,
-      {
-        method: 'GET',
-   
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Error fetching favorite properties: ${res.statusText}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error("Failed to fetch favorite properties:", error);
-    throw error;
-  } 
-}
+};

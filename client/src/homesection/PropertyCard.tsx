@@ -4,6 +4,12 @@ import { MapPin, Bed, Bath, Square, Heart, Share2 } from 'lucide-react';
 import { type Property } from "@/lib/type";
 import Image from 'next/image';
 import Link from 'next/link';
+import { addFavorites } from '@/service/favourites';
+import { toast } from 'sonner';
+import { useState } from 'react';
+
+import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 
 interface PropertyCardProps {
   property: Property;
@@ -11,6 +17,11 @@ interface PropertyCardProps {
 }
 
 export const PropertyCard = ({ property,  }: PropertyCardProps) => {
+  const { user } = useUser();
+const router = useRouter();
+
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const formatPrice = (price: string | number) => {
     const numPrice = parseFloat(price.toString());
     if (numPrice >= 10000000) {
@@ -24,6 +35,28 @@ export const PropertyCard = ({ property,  }: PropertyCardProps) => {
   };
 
 
+ const addFavourites = async (propertyId: string) => {
+  if (!user) {
+    router.push('/login');
+    return;
+  }
+
+  if (isLoading) return;
+  setIsLoading(true);
+
+  try {
+    const data = await addFavorites(propertyId); // ✅ Direct await করো
+    
+    toast.success('Added to favorites successfully');
+    setIsFavorited(true);
+    console.log('Added to favorites:', data);
+  } catch (error) {
+    console.error('Error adding to favorites:', error);
+    toast.error('Failed to add to favorites');
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <div className="max-w-sm mx-auto bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       {/* Image Section */}
@@ -54,9 +87,14 @@ export const PropertyCard = ({ property,  }: PropertyCardProps) => {
 
         {/* Action buttons */}
         <div className="absolute bottom-3 right-3 flex gap-2">
-          <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
-            <Heart className="w-4 h-4 text-gray-600" />
-          </button>
+         <button 
+  onClick={() => addFavourites(property.id)}
+  disabled={isLoading}
+  className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors"
+>
+  <Heart className={`w-4 h-4 ${isFavorited ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
+</button>
+
           <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
             <Share2 className="w-4 h-4 text-gray-600" />
           </button>
