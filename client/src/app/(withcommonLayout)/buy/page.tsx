@@ -19,7 +19,7 @@ useEffect(() => {
 
       const filtered = data.filter(
         (property: Property) =>
-          property.property_type === 'House' &&
+          
           property.purpose === 'For Sale'
       );
       setFilteredProperties(filtered);
