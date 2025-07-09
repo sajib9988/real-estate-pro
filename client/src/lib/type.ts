@@ -7,7 +7,7 @@ export interface DecodedUser {
   iat: number; // Issued at time
 }
 
-export interface Property {
+export type Property ={
   id: string;
   title: string;
   price: number;
