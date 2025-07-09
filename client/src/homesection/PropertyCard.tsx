@@ -149,7 +149,7 @@ const router = useRouter();
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
 
           <Link 
-            href={`/properties/${propertyId}`}
+            href={`/properties/${property.id}`}
         
             className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
           >

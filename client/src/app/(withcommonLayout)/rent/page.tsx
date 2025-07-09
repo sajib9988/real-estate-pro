@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const BuyHomePage = () => {
+const RentHomePage = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,4 +174,4 @@ useEffect(() => {
   );
 };
 
-export default BuyHomePage;
+export default RentHomePage;
