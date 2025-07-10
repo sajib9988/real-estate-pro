@@ -103,7 +103,18 @@ export const refreshToken = async (refreshToken: string) => {
   }
 };
 
-
+export const sellerApply= async()=>{
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/accounts/apply-seller/`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+}
 
 
 export const logout = async () => {
