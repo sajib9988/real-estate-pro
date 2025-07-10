@@ -104,10 +104,11 @@ export const refreshToken = async (refreshToken: string) => {
 };
 
 // client/src/service/auth/index.ts
-export const sellerApply = async () => {
+export const sellerApply = async (applicationData: FieldValues) => {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('accessToken')?.value;
+    console.log("Access Token in sellerApply:", accessToken);
     
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/accounts/apply-seller/`, {
       method: 'POST', // ✅ সঠিক method
@@ -115,6 +116,7 @@ export const sellerApply = async () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}` // ✅ Token add করা হলো
       },
+      body: JSON.stringify(applicationData),
     });
     
     const data = await res.json();

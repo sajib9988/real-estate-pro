@@ -48,6 +48,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class SellerApplication(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='seller_application')
+    company_name = models.CharField(max_length=100, blank=True, null=True)
+    company_address = models.CharField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
     
     STATUS_CHOICES = [
         ('pending', 'Pending'),
